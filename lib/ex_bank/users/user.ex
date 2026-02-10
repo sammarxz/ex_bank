@@ -2,11 +2,12 @@ defmodule ExBank.Users.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @required_params [:name, :email, :password_hash, :cep]
+  @required_params [:name, :email, :password, :cep]
 
   schema "users" do
     field :name, :string
     field :email, :string
+    field :password, :string, virtual: true
     field :password_hash, :string
     field :cep, :string
 
@@ -23,5 +24,14 @@ defmodule ExBank.Users.User do
     |> unique_constraint(:email)
     |> validate_length(:password_hash, min: 6)
     |> validate_length(:cep, is: 8)
+    |> add_password_hash()
   end
+
+  defp add_password_hash(
+         %Ecto.Changeset{valid?: true, changes: %{password: password}} = changeset
+       ) do
+    put_change(changeset, :password_hash, Argon2.hash_pwd_salt(password))
+  end
+
+  defp add_password_hash(changeset), do: changeset
 end
