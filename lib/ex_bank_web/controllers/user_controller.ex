@@ -2,6 +2,7 @@ defmodule ExBankWeb.UserController do
   use ExBankWeb, :controller
 
   alias ExBank.Users.Create
+  alias ExBankWeb.ErrorJSON
 
   def create(conn, params) do
     params
@@ -15,9 +16,10 @@ defmodule ExBankWeb.UserController do
     |> render(:create, user: user)
   end
 
-  defp handle_response({:error, _changeset}, conn) do
+  defp handle_response({:error, changeset}, conn) do
     conn
     |> put_status(:bad_request)
-    |> json(%{error: "Invalid parameters"})
+    |> put_view(json: ErrorJSON)
+    |> render(:error, changeset: changeset)
   end
 end
