@@ -8,6 +8,8 @@ defmodule ExBankWeb.Router do
   scope "/api", ExBankWeb do
     pipe_through :api
     get "/", WelcomeController, :index
+
+    resources "/users", UserController, only: [:create, :update, :show, :delete]
   end
 
   # Enable LiveDashboard in development
