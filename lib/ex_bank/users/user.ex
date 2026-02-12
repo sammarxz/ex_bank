@@ -4,6 +4,7 @@ defmodule ExBank.Users.User do
 
   @required_params [:name, :email, :password, :cep]
 
+  @derive {Jason.Encoder, only: [:id, :name, :email, :cep]}
   schema "users" do
     field :name, :string
     field :email, :string
