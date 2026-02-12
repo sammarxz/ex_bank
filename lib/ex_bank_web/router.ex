@@ -9,7 +9,7 @@ defmodule ExBankWeb.Router do
     pipe_through :api
     get "/", WelcomeController, :index
 
-    resources "/users", UserController, only: [:create, :update, :show, :delete]
+    resources "/users", UserController, only: [:create, :show]
   end
 
   # Enable LiveDashboard in development
