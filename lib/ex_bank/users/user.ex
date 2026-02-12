@@ -2,7 +2,8 @@ defmodule ExBank.Users.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @required_params [:name, :email, :password, :cep]
+  @required_params_create [:name, :email, :password, :cep]
+  @required_params_update [:name, :email, :cep]
 
   @derive {Jason.Encoder, only: [:id, :name, :email, :cep]}
   schema "users" do
@@ -15,17 +16,28 @@ defmodule ExBank.Users.User do
     timestamps()
   end
 
-  def changeset(user, attrs) do
+  def create_changeset(user, attrs) do
     user
-    |> cast(attrs, @required_params)
-    |> validate_required(@required_params)
+    |> cast(attrs, @required_params_create)
+    |> do_validations(@required_params_create)
+    |> add_password_hash()
+  end
+
+  def update_changeset(user, attrs) do
+    user
+    |> cast(attrs, @required_params_update)
+    |> do_validations(@required_params_update)
+    |> add_password_hash()
+  end
+
+  defp do_validations(changeset, fields) do
+    changeset
+    |> validate_required(fields)
     |> validate_length(:name, min: 3)
     |> validate_length(:email, min: 3)
     |> validate_format(:email, ~r/^[^\s]+@[^\s]+\.[^\s]+$/)
     |> unique_constraint(:email)
-    |> validate_length(:password_hash, min: 6)
     |> validate_length(:cep, is: 8)
-    |> add_password_hash()
   end
 
   defp add_password_hash(

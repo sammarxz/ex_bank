@@ -4,7 +4,7 @@ defmodule ExBank.Users.Create do
 
   def call(attrs) do
     %User{}
-    |> User.changeset(attrs)
+    |> User.create_changeset(attrs)
     |> Repo.insert()
   end
 end
